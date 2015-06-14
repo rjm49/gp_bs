@@ -7,42 +7,36 @@ from GenPercept import GenPercept
 import conll_utils
 import heapq
 
-n_iter=10
-max_sentences = 1000 # just train on 5000 sentences to start
+n_iter=20
+max_sentences = 5000 # just train on 5000 sentences to start
 training_file = 'C:\\Users\\Russell\\Dropbox\\nlp_alta\\tacl14_swbd_deps\\train.conll'
 beam_w = 10
 
 def beam_search(sentence, beam_width=5):
-       
         #words = sentence.split()
         candidates = [(0.0,[])]
-
+        scored_cands = []
         agenda = []
         #for i in range(iterations):
+        j=0
         while True:
             for c in candidates:
                 agenda += expand(c)
+
+            scored_cands = []      
+            for item in agenda: 
+                heapq.heappush(scored_cands, score(item))
             
-#             for item in agenda:
-#                 score(item)
+            candidates = heapq.nlargest(beam_width, scored_cands) #get the beam_width top scored candidates
+            print 'iter',j,'top',beam_width,':',candidates 
             
-            candidates = get_top_n(agenda, beam_width)
             best = candidates[0]
             if goal_test(best):
                 print "GOAL MET"
                 return best
             agenda = []
+            j+=1
     
-def get_top_n(agenda, n):
-    scores = []
-    #print "agenda looks like:", agenda
-    for item in agenda:
-        #print "scoring item:", item
-        scored_item = score(item)
-        heapq.heappush(scores, scored_item)
-    #return [scored_tuple[1] for scored_tuple in heapq.nlargest(n, scores)]
-    return heapq.nlargest(n, scores)
-    #scored tuples are of the form (score:int , [pos_tags])
 
 def goal_test(cand):
     return len(cand[1]) == len(perc.context)-4 #i.e. is the list of tags the same length as the sentence (with 4 pieces of padding removed)
@@ -52,7 +46,7 @@ def score(item):
     #how do we generally "score" our items?? we surely have to do an incremental weight comparison??
     score = perc.get_score(item)
     scored_item = (score, item[1])
-    print 'returning scored item=', scored_item
+    #print 'returning scored item=', scored_item
     return scored_item
 
 def expand(cand):
@@ -66,7 +60,7 @@ def expand(cand):
         newc=(cand[0], cand[1]+[pnt])
         #compute overall score
         newcs.append(newc)
-    print "new candidates:", newcs
+    #print "new candidates:", newcs
     return newcs
     
 if __name__ == '__main__':
@@ -82,7 +76,7 @@ if __name__ == '__main__':
     print perc.i == perc.N * perc.P
         
     #initialise the test data
-    sentence = 'the quick brown fox jumps over the lazy dog'
+    sentence = 'he lives in a pineapple under the sea'
     
     print "SETTING CONTEXT"
     perc.set_context(sentence.split())
@@ -90,5 +84,5 @@ if __name__ == '__main__':
     print "STARTING BEAM SEARCH"
     best = beam_search(sentence, beam_w)
     print "ENDED BEAM SEARCH"
-    print best
+    print sentence, best
     

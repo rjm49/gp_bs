@@ -110,7 +110,7 @@ class GenPercept(object):
         prev = tags_so_far[-2]
         pprev = tags_so_far[-3]
         word = self.context[index]
-        print word, "=?", cls, "(given:", prev, pprev, ")"
+        #print word, "=?", cls, "(given:", prev, pprev, ")"
         
         features = FeatureExtractor._get_features(index, word, self.context, prev, pprev)
         for feat in features:
@@ -173,7 +173,7 @@ class GenPercept(object):
             for tok in sent.split():
                 #print tok
                 w,t = tok.split('/')
-                print w,t
+                #print w,t
                 words.append(w)
                 tags.append(t)
             out_list.append((words,tags))
