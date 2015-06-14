@@ -27,9 +27,12 @@ class GenPercept(object):
         #we actually want to convert ['the/DT first/JJ example/JJ string/NN', 'the/DT second/JJ example/JJ string/NN']
         #to [ (['the','first','example','string'],['DT','JJ','JJ','NN']), (['the','second','example','string'],['DT','JJ','JJ','NN']) ]
 
+<<<<<<< HEAD
     def set_context(self, words):
         self.context = GenPercept.START_PADDING + words + GenPercept.END_PADDING #fill out the space at either end to allow back and fwd looking features
                
+=======
+>>>>>>> 206a6477e825d3358c3dfe4c0f399339ac3c9da2
     def train(self, n_iter, examples):
         self.N = n_iter
         self.P = len(examples)
@@ -38,11 +41,19 @@ class GenPercept(object):
             random.shuffle(examples)
             for words, tags in self._parallelise(examples):
                 self.observed_tags = self.observed_tags.union(tags) # build up a set of seen tags as we go
+<<<<<<< HEAD
                 self.set_context(words)
                 prev, pprev = GenPercept.START_PADDING
 
                 for wi, word in enumerate(words):
                     feats = FeatureExtractor._get_features(wi, word, self.context, prev, pprev) #this returns the set of features that this word has...
+=======
+                prev, pprev = GenPercept.START_PADDING
+                context = GenPercept.START_PADDING + words + GenPercept.END_PADDING #fill out the space at either end to allow back and fwd looking features
+               
+                for wi, word in enumerate(words):
+                    feats = FeatureExtractor._get_features(wi, word, context, prev, pprev) #this returns the set of features that this word has...
+>>>>>>> 206a6477e825d3358c3dfe4c0f399339ac3c9da2
                     guess_tag = self.predict(feats)
                     real_tag = tags[wi]
                     if real_tag != guess_tag:
@@ -55,6 +66,7 @@ class GenPercept(object):
 
     def predict_tags(self, sentence):
         words = sentence.split()
+<<<<<<< HEAD
         self.set_context(words)
         prev, pprev = GenPercept.START_PADDING
         
@@ -63,6 +75,14 @@ class GenPercept(object):
         
         for w in words:
             feats = FeatureExtractor._get_features(i, w, self.context, prev, pprev )
+=======
+        predicted_tags = []
+        i=0
+        prev, pprev = GenPercept.START_PADDING
+        context = GenPercept.START_PADDING + words + GenPercept.END_PADDING
+        for w in words:
+            feats = FeatureExtractor._get_features(i, w, context, prev, pprev )
+>>>>>>> 206a6477e825d3358c3dfe4c0f399339ac3c9da2
             guess_tag = self.predict(feats)
             predicted_tags.append(guess_tag)
             
@@ -84,6 +104,7 @@ class GenPercept(object):
         return max(self.observed_tags, key=lambda klass: (scores[klass], klass)) #ok, so this returns the max (class, score) combo
 
 #will need this for a non-greedy implementation
+<<<<<<< HEAD
     def get_scores(self, features):
         scores=defaultdict(float)
         for feat in features:
@@ -123,6 +144,17 @@ class GenPercept(object):
             
             score += f_weights[cls]
         return score
+=======
+#     def get_scores(self, features):
+#         scores=defaultdict(float)
+#         for feat in features:
+#             if feat not in self.weights:
+#                 continue
+#             weights = self.weights[feat]
+#             for cls, wgt in weights.items():
+#                 scores[cls] += wgt
+#         return scores
+>>>>>>> 206a6477e825d3358c3dfe4c0f399339ac3c9da2
 
     def update(self, truth, guess, features):
         def upd_feat(c, f, delta):            
@@ -173,7 +205,11 @@ class GenPercept(object):
             for tok in sent.split():
                 #print tok
                 w,t = tok.split('/')
+<<<<<<< HEAD
                 #print w,t
+=======
+                print w,t
+>>>>>>> 206a6477e825d3358c3dfe4c0f399339ac3c9da2
                 words.append(w)
                 tags.append(t)
             out_list.append((words,tags))

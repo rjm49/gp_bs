@@ -12,7 +12,10 @@ def _get_features(i, word, context, prev, prev2):
         features.add('+'.join((name,) + tuple(args)))
  
     i += len(GenPercept.GenPercept.START_PADDING)
+<<<<<<< HEAD
     
+=======
+>>>>>>> 206a6477e825d3358c3dfe4c0f399339ac3c9da2
     features = set()
     add('bias') # This acts sort of like a prior
     add('i suffix', word[-3:])
